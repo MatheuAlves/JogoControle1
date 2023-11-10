@@ -72,14 +72,14 @@ running = True
 gameover = False
 
 # Defina as velocidades de forma aleatória para speed1 e speed2
-speed1 = random.randint(1, 4)
-speed2 = random.randint(6, 10)
+speed1 = random.randint(3, 6)
+speed2 = random.randint(3, 6)
 
 # Variáveis de tempo e distância
 tempo = 0
 distancia1 = 0
 distancia2 = 0
-valor_final = 7
+valor_final = 10
 cont1 = 0
 cont2 = 0
 
@@ -113,7 +113,7 @@ while running:
         pygame.draw.rect(screen, white, (lane1, y + lane_marker_move_y1, marker_width, marker_height))
         
     # draw the lane markers on road 2
-    lane_marker_move_y2 += speed2 
+    lane_marker_move_y2 += speed2 * 1
     if lane_marker_move_y2 >= marker_height * 2:
         lane_marker_move_y2 = 0
     for y in range(marker_height * -2, height, marker_height * 2):
@@ -126,8 +126,8 @@ while running:
     tempo += 1 / fps
 
     # Calcule a distância percorrida para cada jogador
-    distancia1 = speed1 * tempo
-    distancia2 = speed2 * tempo
+    distancia1 += speed1 * (1/fps)
+    distancia2 += speed2 * (1/fps)
         
     # display the test
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
@@ -196,8 +196,8 @@ while running:
                     distancia2 = 0
                     cont1 = 0
                     cont2 = 0
-                    speed1 = random.randint(1, 4)
-                    speed2 = random.randint(6, 10)
+                    speed1 = random.randint(3, 6)
+                    speed2 = random.randint(3, 6)
                     player1.rect.center = [player1_x, player_y]
                     player2.rect.center = [player2_x, player_y]
                 elif event.key == K_n:

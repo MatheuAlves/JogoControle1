@@ -1,24 +1,24 @@
+import control as ctrl
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.signal import TransferFunction, impulse
 
-# Defina os valores dos polos e zeros diretamente
-poles = [10 + 0j, 1 + 0j]  # Exemplo com dois polos complexos conjugados
-zeros = [10]  # Exemplo com um zero
+# Parâmetros do sistema discreto (você pode ajustar conforme necessário)
+numerator = [1]  # Coeficientes do numerador da função de transferência discreta
+denominator = [1, -0.5]  # Coeficientes do denominador da função de transferência discreta
 
-# Cria a função de transferência com base nos polos e zeros fornecidos
-numerator = np.poly(zeros)
-denominator = np.poly(poles)
+# Tempo de simulação discreto
+time_discrete = np.arange(0, 21, 1)  # Tempo discreto de 0 a 20 com passo 1
 
-sys = TransferFunction(numerator, denominator)
+# Criar a função de transferência discreta
+system_discrete = ctrl.TransferFunction(numerator, denominator, dt=1.0)  # dt é o intervalo de amostragem
 
-# Calcula a resposta ao impulso
-t, y = impulse(sys)
+# Gerar resposta ao degrau discreto
+time_discrete, response_discrete = ctrl.step_response(system_discrete, time_discrete)
 
-# Plota a resposta ao impulso
-plt.plot(t, y)
-plt.xlabel('Tempo')
-plt.ylabel('Resposta ao Impulso')
-plt.title('Resposta ao Impulso da Função de Transferência')
+# Plotar a resposta ao degrau discreto
+plt.stem(time_discrete, response_discrete)
+plt.title('Resposta ao Degrau Discreto')
+plt.xlabel('Tempo discreto')
+plt.ylabel('Amplitude')
 plt.grid(True)
 plt.show()
