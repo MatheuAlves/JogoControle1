@@ -1,27 +1,40 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import signal
+import control.matlab as clt
+import random
 
-# Parâmetros do sistema discreto (você pode ajustar conforme necessário)
-numerator = [1.0]  # Coeficientes do numerador da função de transferência discreta
-denominator = [1.0, 1.0, 100.0]  # Coeficientes do denominador da função de transferência discreta
+choice = random.choice(['1', '2'])
 
-# Tempo de simulação discreto
-time_discrete = np.arange(0, 20, 1)  # Tempo discreto de 0 a 20 com passo 1
+lower_limit = 0.0
+upper_limit = 10.0
 
-# Criar a função de transferência discreta
-system_discrete = signal.dlti(numerator, denominator, dt=1.0)  # dt é o intervalo de amostragem
+if choice == '1':
+    rd_num_c1 = random.uniform(lower_limit, upper_limit)
+    num = np.array([rd_num_c1])
+    rd_den_c1 = random.uniform(lower_limit, upper_limit)
+    den = np.array([1, rd_den_c1])
+elif choice == '2':
+    rd_num_c1 = random.uniform(lower_limit, upper_limit)
+    rd_num_c2 = random.uniform(lower_limit, upper_limit)
+    num = np.array([rd_num_c1, rd_num_c2])
+    rd_den_c1 = random.uniform(lower_limit, upper_limit)
+    rd_den_c2 = random.uniform(lower_limit, upper_limit)
+    den = np.array([1, rd_den_c1, rd_den_c2])
 
-# Gerar resposta ao degrau discreto
-time_discrete, response_discrete = signal.dstep(system_discrete)
+H_continous = clt.tf(num, den)
+print(H_continous)
 
-# Ajustar o shape da resposta ao degrau
-response_discrete = np.squeeze(response_discrete)
+sample_time = 0.01
+H_discrete = clt.sample_system(H_continous, sample_time, method='zoh')
 
-# Plotar a resposta ao degrau discreto
-plt.stem(time_discrete, response_discrete)
-plt.title('Resposta ao Degrau Discreto')
-plt.xlabel('Tempo discreto')
-plt.ylabel('Amplitude')
+total_time = 10.0
+time_interval = np.arange(0, total_time + sample_time, sample_time)
+
+yout, T = clt.step(H_discrete, time_interval)
+
+plt.stem(T, yout, basefmt='b', linefmt='r', markerfmt='r.')
+plt.title('Step Response')
+plt.xlabel('Time')
+plt.ylabel('Response')
 plt.grid(True)
 plt.show()
