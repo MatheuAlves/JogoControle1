@@ -91,7 +91,7 @@ while running:
         info_close_image = pygame.transform.scale(info_close_image, (30, 30))
         info_close_rect = pygame.draw.rect(screen, BLACK, (420, 50, 30, 30))
         info_close_rect = screen.blit(info_close_image, (420, 50))
-        if info_close_rect.collidepoint(event.pos):
+        if info_close_rect.collidepoint(pygame.mouse.get_pos()):
                 info_box = False
 
     pygame.display.flip()
