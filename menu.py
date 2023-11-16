@@ -1,13 +1,14 @@
 import pygame
 import sys
 import subprocess
-
+import time
 
 # Inicialização do Pygame
 pygame.init()
 
 # Configurações da tela
-width, height = 500, 500
+width = 800
+height = 600
 screen_size = (width, height)
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption("Menu Pygame")
@@ -23,10 +24,10 @@ info_button_image = pygame.image.load("images/INFO.PNG")
 info_button_image = pygame.transform.scale(info_button_image, (125, 50))
 # Imagem do botão de mudo quando o som está ativado
 sound_button_image = pygame.image.load("images/sound.png")
-sound_button_image = pygame.transform.scale(sound_button_image, (100, 100))
+sound_button_image = pygame.transform.scale(sound_button_image, (30, 30))
 # Imagem do botão de mudo quando o som está mudo
 muted_button_image = pygame.image.load("images/mute.png")
-muted_button_image = pygame.transform.scale(muted_button_image, (100, 100))
+muted_button_image = pygame.transform.scale(muted_button_image, (30, 30))
 
 # Carregando fonte
 font = pygame.font.Font(None, 36)
@@ -50,7 +51,12 @@ while running:
             if play_button_rect.collidepoint(event.pos):
                 if play_button_rect.collidepoint(event.pos):
                     pygame.mixer.Sound("songs/confirm.mp3").play()
-                    subprocess.run(["python", "game.py"])  # Executar o script 'jogo.py'
+                    # Fechar a janela antes de abrir o subprocesso
+                    pygame.quit()
+
+                    # Adicionar um pequeno atraso para garantir que a janela seja fechada antes de abrir o subprocesso
+                    time.sleep(0.5)
+                    subprocess.run(["python", "forms.py"])  # Executar o script 'jogo.py'
                     running = False
                     break
 
@@ -73,9 +79,9 @@ while running:
 
     # Escolha a imagem do botão de mudo com base no estado de is_muted
     if is_muted:
-        mute_button_rect = screen.blit(muted_button_image, (400, 400))
+        mute_button_rect = screen.blit(muted_button_image, (770, 570))
     else:
-        mute_button_rect = screen.blit(sound_button_image, (400, 400))
+        mute_button_rect = screen.blit(sound_button_image, (770, 570))
 
     # Título "CAR RACE" acima do botão "Jogar"
     title_text = font.render("CAR RACE", True, BLACK)

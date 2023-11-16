@@ -76,7 +76,7 @@ def update_data():
 
     trans_cont = STEP_VALUE * clt.tf(num, den)
     #trans_disc = clt.sample_system(trans_cont, SAMPLE_TIME, method='zoh')
-    #time_interval = np.arange(0, TOTAL_TIME + SAMPLE_TIME, SAMPLE_TIME)
+    time_interval = np.arange(0, TOTAL_TIME + SAMPLE_TIME, SAMPLE_TIME)
     yout, xout = clt.step(trans_cont, time_interval)
     #yout, xout = clt.step(trans_disc, time_interval)
 

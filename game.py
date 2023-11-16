@@ -1,12 +1,13 @@
 import pygame
 from pygame.locals import *
 import random
+import subprocess
+import time
 
 pygame.init()
-
 # create the window
-width = 500
-height = 500
+width = 800
+height = 600
 screen_size = (width, height)
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption('Car Game')
@@ -23,17 +24,17 @@ marker_width = 10
 marker_height = 50
 
 # lane coordinates
-lane1 = 100
-lane2 = 390
+lane1 = 200
+lane2 = 590
 
 # road and edge markers
-road1 = (0, 0, road_width, height)
-road2 = (300, 0, road_width, height)
-left_edge_marker = (0, 0, marker_width, height)
-right_edge_marker = (200, 0, marker_width, height)
+road1 = (100, 0, road_width, height)
+road2 = (500, 0, road_width, height)
+left_edge_marker = (100, 0, marker_width, height)
+right_edge_marker = (300, 0, marker_width, height)
 
-left_edge_marker2 = (290, 0, marker_width, height)
-right_edge_marker2 = (490, 0, marker_width, height)
+left_edge_marker2 = (490, 0, marker_width, height)
+right_edge_marker2 = (690, 0, marker_width, height)
 
 # for animating movement of the lane markers
 lane_marker_move_y1 = 0
@@ -133,19 +134,19 @@ while running:
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
     text = font.render('Distância 1: {:.2f}'.format(distancia1), True, white)
     text_rect = text.get_rect()
-    text_rect.center = (55, 380)
+    text_rect.center = (200, 590)
     screen.blit(text, text_rect)
     
     text2 = font.render('Distância 2: {:.2f}'.format(distancia2), True, white)
     text_rect2 = text2.get_rect()
-    text_rect2.center = (350, 380)
+    text_rect2.center = (590, 590)
     screen.blit(text2, text_rect2)
     
     # Crie uma superfície de texto para exibir o tempo
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
     text_tempo = font.render('Tempo: {:.2f} s'.format(tempo), True, white)
     text_rect_tempo = text_tempo.get_rect()
-    text_rect_tempo.center = (width // 2, 20)
+    text_rect_tempo.center = (width // 2, 590)
 
     # Desenhe a superfície de texto na tela
     screen.blit(text_tempo, text_rect_tempo)
@@ -200,6 +201,14 @@ while running:
                     speed2 = random.randint(3, 6)
                     player1.rect.center = [player1_x, player_y]
                     player2.rect.center = [player2_x, player_y]
+                    
+                    # Fechar a janela antes de abrir o subprocesso
+                    pygame.quit()
+
+                    # Adicionar um pequeno atraso para garantir que a janela seja fechada antes de abrir o subprocesso
+                    time.sleep(0.5)
+                    
+                    subprocess.run(["python", "forms.py"])  # Executar o script 'jogo.py'
                 elif event.key == K_n:
                     # exit the loops
                     gameover = False

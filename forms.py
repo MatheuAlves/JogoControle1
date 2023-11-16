@@ -1,12 +1,16 @@
 import pygame
 import sys
+import subprocess
+import time
 
 # Iniciar o Pygame
 pygame.init()
 
 # Configurações da tela do Pygame
-width, height = 800, 600
-screen = pygame.display.set_mode((width, height))
+width = 800
+height = 600
+screen_size = (width, height)
+screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption("Pygame Form")
 
 # Cores
@@ -26,6 +30,17 @@ def draw_radio_button(surface, x, y, text, selected):
 
     text_surface = font.render(text, True, white)
     surface.blit(text_surface, (x + 30, y))
+    
+    # Texto
+    text = font.render('Aperte espaço para iniciar o jogo', True, black)
+    text_rect = text.get_rect(center=(width / 2, 450))
+
+    # Desenhar retângulo branco de fundo
+    pygame.draw.rect(screen, white, (0, 400, width , 100))
+
+    # Desenhar o texto no centro da tela
+    screen.blit(text, text_rect)
+
 
 # Loop principal do Pygame
 running = True
@@ -59,6 +74,20 @@ while running:
                 else:
                     selected_option["D"] = True
                     selected_option["P"] = True
+    # Verificar se a tecla de espaço foi pressionada
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_SPACE]:
+        running = False
+        # Fechar a janela antes de abrir o subprocesso
+        pygame.quit()
+
+        # Adicionar um pequeno atraso para garantir que a janela seja fechada antes de abrir o subprocesso
+        time.sleep(0.5)
+        subprocess.run(["python", "game.py"])  # Executar o script 'jogo.py'
+        # Finalizar o Pygame
+        pygame.quit()
+        sys.exit()
+
 
     # Limpar a tela
     screen.fill(black)
