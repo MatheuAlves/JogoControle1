@@ -3,6 +3,21 @@ from pygame.locals import *
 import random
 import subprocess
 import time
+import sys
+import ast
+""" 
+subprocess_data_str = sys.argv[1]
+
+try:
+    subprocess_data = ast.literal_eval(subprocess_data_str)
+    if not isinstance(subprocess_data, dict):
+        raise ValueError("Invalid data format")
+except (ValueError, SyntaxError) as e:
+    print(f"Error converting string to dictionary: {e}")
+    sys.exit(1)
+
+print("Received data:", subprocess_data)
+sys.stdout.flush() """
 
 pygame.init()
 # create the window
@@ -73,14 +88,14 @@ running = True
 gameover = False
 
 # Defina as velocidades de forma aleatória para speed1 e speed2
-speed1 = random.randint(3, 6)
-speed2 = random.randint(3, 6)
+speed1 = random.randint(5, 20)
+speed2 = random.randint(5, 20)
 
 # Variáveis de tempo e distância
 tempo = 0
 distancia1 = 0
 distancia2 = 0
-valor_final = 10
+valor_final = 100
 cont1 = 0
 cont2 = 0
 
