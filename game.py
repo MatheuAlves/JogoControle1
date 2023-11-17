@@ -5,7 +5,11 @@ import subprocess
 import time
 import sys
 import ast
-""" 
+import numpy as np
+import control.matlab as clt
+
+TOTAL_TIME = 20.0
+
 subprocess_data_str = sys.argv[1]
 
 try:
@@ -16,8 +20,7 @@ except (ValueError, SyntaxError) as e:
     print(f"Error converting string to dictionary: {e}")
     sys.exit(1)
 
-print("Received data:", subprocess_data)
-sys.stdout.flush() """
+sys.stdout.flush()
 
 pygame.init()
 # create the window
@@ -98,10 +101,37 @@ distancia2 = 0
 valor_final = 100
 cont1 = 0
 cont2 = 0
+ticks = 0
+
+time_interval = np.arange(0, TOTAL_TIME + 1/fps, 1/fps)
+
+trans_cont_user = clt.tf(subprocess_data["ft_carro"][0], subprocess_data["ft_carro"][1])
+trans_disc_user = clt.sample_system(trans_cont_user, 1/fps, method='zoh')
+yout_user, xout_user = clt.step(trans_disc_user, time_interval)
+speed_user = yout_user.tolist()
+
+trans_cont_cpu = clt.tf(subprocess_data["ft_taxi"][0], subprocess_data["ft_taxi"][1])
+trans_disc_cpu = clt.sample_system(trans_cont_cpu, 1/fps, method='zoh')
+yout_cpu, xout_cpu = clt.step(trans_disc_cpu, time_interval)
+speed_cpu = yout_cpu.tolist()
 
 while running:
     
     clock.tick(fps)
+
+    if distancia1 > valor_final:
+        speed1 = 0
+        cont1 = 1
+    elif ticks < len(speed_user):
+        speed1 = speed_user[ticks]
+
+    if distancia2 > valor_final:
+        speed2 = 0
+        cont2 = 1
+    elif ticks < len(speed_user):
+        speed2 = speed_cpu[ticks]
+
+    ticks += 1
     
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -168,13 +198,6 @@ while running:
 
     
     pygame.display.update()
-    
-    if distancia1 > valor_final:
-        speed1 = 0
-        cont1 = 1
-    if distancia2 > valor_final:
-        speed2 = 0
-        cont2 = 1
         
     if cont1 == 1 and cont2 == 1:
         gameover = True

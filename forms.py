@@ -48,6 +48,7 @@ def update_data():
     global yout
     global xout
     global trans_cont
+    global trans_cont_carro
 
     if selected_option["P"]:
         if selected_option["I"]:
@@ -55,20 +56,25 @@ def update_data():
                 gain = clt.tf([kp], [1]) + clt.tf([ki], [1, 0]) + clt.tf([kd, 0], [1])
                 new_tf_cont = gain * trans_cont
                 yout, xout = clt.step(new_tf_cont)
+                trans_cont_carro = new_tf_cont
             else:
                 gain = clt.tf([kp], [1]) + clt.tf([ki], [1, 0])
                 new_tf_cont = gain * trans_cont
                 yout, xout = clt.step(new_tf_cont)
+                trans_cont_carro = new_tf_cont
         else:
             gain = clt.tf([kp], [1])
             new_tf_cont = gain * trans_cont
             yout, xout = clt.step(new_tf_cont)
+            trans_cont_carro = new_tf_cont
     elif selected_option["I"]:
         gain = clt.tf([kp], [1]) + clt.tf([ki], [1, 0]) + clt.tf([kd, 0], [1])
         new_tf_cont = gain * trans_cont
         yout, xout = clt.step(new_tf_cont)
+        trans_cont_carro = new_tf_cont
     else:
         yout, xout = clt.step(trans_cont)
+        trans_cont_carro = trans_cont
         
 
 choice = random.choice(['1', '2'])
@@ -93,7 +99,8 @@ elif choice == '2':
     upper_text = f"{rd_num_c1}s + {rd_num_c2}"
     lower_text = f"s^2 + {rd_den_c1}s + {rd_den_c2}"
 
-trans_cont = 5 * clt.tf(num, den)
+trans_cont = 10 * clt.tf(num, den)
+trans_cont_carro = trans_cont
 #time_interval = np.arange(0, TOTAL_TIME + 0.001, 0.001)
 yout, xout = clt.step(trans_cont)
 
@@ -295,10 +302,10 @@ while running:
                                 text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
                                 ki += 1
-                                text_ki_surface = font.render("Kp = {:.1f}".format(ki), True, black)
+                                text_ki_surface = font.render("Ki = {:.1f}".format(ki), True, black)
                             case 3:
                                 kd += 1
-                                text_kd_surface = font.render("Kp = {:.1f}".format(kd), True, black)
+                                text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
                     elif pressed_icon == "-1":
                         match icons["group"]:
                             case 1:
@@ -306,10 +313,10 @@ while running:
                                 text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
                                 ki += -1
-                                text_ki_surface = font.render("Kp = {:.1f}".format(ki), True, black)
+                                text_ki_surface = font.render("Ki = {:.1f}".format(ki), True, black)
                             case 3:
                                 kd += -1
-                                text_kd_surface = font.render("Kp = {:.1f}".format(kd), True, black)
+                                text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
                     elif pressed_icon == "+0.1":
                         match icons["group"]:
                             case 1:
@@ -317,10 +324,10 @@ while running:
                                 text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
                                 ki += 0.1
-                                text_ki_surface = font.render("Kp = {:.1f}".format(ki), True, black)
+                                text_ki_surface = font.render("Ki = {:.1f}".format(ki), True, black)
                             case 3:
                                 kd += 0.1
-                                text_kd_surface = font.render("Kp = {:.1f}".format(kd), True, black)
+                                text_kd_surface = font.render("Kd= {:.1f}".format(kd), True, black)
                     elif pressed_icon == "-0.1":
                         match icons["group"]:
                             case 1:
@@ -328,9 +335,10 @@ while running:
                                 text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
                                 ki += -0.1
+                                text_ki_surface = font.render("Ki = {:.1f}".format(ki), True, black)
                             case 3:
                                 kd += -0.1
-                                text_kd_surface = font.render("Kp = {:.1f}".format(kd), True, black)
+                                text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
                     break
                     
     # Verificar se a tecla de espaço foi pressionada
@@ -340,10 +348,15 @@ while running:
         # Fechar a janela antes de abrir o subprocesso
         pygame.quit()
 
+        data1 = clt.tfdata(trans_cont)
+        data2 = clt.tfdata(trans_cont_carro)
+        # Transformation to lists
+        list_data1 = [[float(item) for sublist in nested_list for array_item in sublist for item in array_item] for nested_list in data1]
+        list_data2 = [[float(item) for sublist in nested_list for array_item in sublist for item in array_item] for nested_list in data2]
+
         subprocess_data = {
-            "P" : selected_option["P"],
-            "I" : selected_option["I"],
-            "D" : selected_option["D"]
+            "ft_taxi" : list_data1,
+            "ft_carro" : list_data2
         }
 
         # Adicionar um pequeno atraso para garantir que a janela seja fechada antes de abrir o subprocesso
