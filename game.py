@@ -36,6 +36,7 @@ green = (76, 208, 56)
 red = (255, 0, 0)
 white = (255, 255, 255)
 yellow = (255, 232, 0)
+black = (0, 0, 0)
 
 # road and marker sizes
 road_width = 200
@@ -45,6 +46,10 @@ marker_height = 50
 # lane coordinates
 lane1 = 200
 lane2 = 590
+
+# Defina as coordenadas iniciais e finais da linha
+line_start = (width // 2, 0)
+line_end = (width // 2, height)
 
 # road and edge markers
 road1 = (100, 0, road_width, height)
@@ -176,7 +181,6 @@ while running:
     distancia1 += speed1 * (1/fps)
     distancia2 += speed2 * (1/fps)
     
-    
     # display the test
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
     text = font.render('Distância 1: {:.2f}'.format(distancia1), True, white)
@@ -205,6 +209,8 @@ while running:
     # Desenhe a superfície de texto na tela
     screen.blit(text_tempo, text_rect_tempo)
 
+    # Desenhe a linha no meio da tela
+    pygame.draw.line(screen, black, line_start, line_end, 2)
     
     pygame.display.update()
         
