@@ -33,6 +33,7 @@ pygame.display.set_caption('Car Game')
 # colors
 gray = (100, 100, 100)
 green = (76, 208, 56)
+red = (255, 0, 0)
 white = (255, 255, 255)
 yellow = (255, 232, 0)
 
@@ -79,11 +80,11 @@ class PlayerVehicle(pygame.sprite.Sprite):
 player_group = pygame.sprite.Group()
 
 # create player 1's car
-player1 = PlayerVehicle('images/car.png', player1_x, player_y)
+player1 = PlayerVehicle('images/redCar.png', player1_x, player_y)
 player_group.add(player1)
 
 # create player 2's car
-player2 = PlayerVehicle('images/taxi.png', player2_x, player_y)
+player2 = PlayerVehicle('images/yellowCar.png', player2_x, player_y)
 player_group.add(player2)
 
 # game loop
@@ -174,7 +175,8 @@ while running:
     # Calcule a distância percorrida para cada jogador
     distancia1 += speed1 * (1/fps)
     distancia2 += speed2 * (1/fps)
-        
+    
+    
     # display the test
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
     text = font.render('Distância 1: {:.2f}'.format(distancia1), True, white)
@@ -186,6 +188,13 @@ while running:
     text_rect2 = text2.get_rect()
     text_rect2.center = (590, 590)
     screen.blit(text2, text_rect2)
+    
+    # Título dos Jogadores
+    font = pygame.font.Font(pygame.font.get_default_font(), 32)
+    cpu_text = font.render("CPU", True, yellow)
+    screen.blit(cpu_text, (560, 100))
+    player_text = font.render("PLAYER", True, red)
+    screen.blit(player_text, (150, 100))
     
     # Crie uma superfície de texto para exibir o tempo
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
