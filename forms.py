@@ -158,16 +158,21 @@ button_graph = Button(532, 125, 200, 30, red, "Gerar Resposta", action=lambda: u
 text_num_surface = font.render(upper_text, True, black)
 text_den_surface = font.render(lower_text, True, black)
 
-text_num_pos = (530, 50 - text_num_surface.get_height() - 5)
-text_den_pos = (530, 50 + text_den_surface.get_height() - 15)
+y_trans = 90
+
+text_num_pos = (530, y_trans - text_num_surface.get_height() - 5)
+text_den_pos = (530, y_trans + text_den_surface.get_height() - 15)
 
 line_width = max(text_num_surface.get_width(), text_den_surface.get_width())
-line_start = (530, 50)
-line_end = (530 + line_width, 50)
+line_start = (530, y_trans)
+line_end = (530 + line_width, y_trans)
 
 # Texto
 text_start = font.render('Aperte espaço para iniciar o jogo', True, grey)
 text_start_rect = text_start.get_rect(center=(width / 2, 575))
+
+text_start1 = font.render('Player 1', True, white)
+text_start_rect1 = text_start1.get_rect(center=(width / 2, 25))
 
 # Loop principal do Pygame
 running = True
@@ -239,19 +244,19 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            if 25 <= mouse_x <= 225 and 25 <= mouse_y <= 55:
+            if 25 <= mouse_x <= 225 and 75 <= mouse_y <= 105:
                 if(selected_option["P"]):
                     selected_option["P"] = False
                     if(selected_option["D"]):
                         selected_option["D"] = False
                 else:
                     selected_option["P"] = True
-            elif 25 <= mouse_x <= 225 and 75 <= mouse_y <= 105:
+            elif 25 <= mouse_x <= 225 and 125 <= mouse_y <= 155:
                 if(selected_option["I"]):
                     selected_option["I"] = False
                 else:
                     selected_option["I"] = True
-            elif 25 <= mouse_x <= 225 and 125 <= mouse_y <= 155:
+            elif 25 <= mouse_x <= 225 and 175 <= mouse_y <= 205:
                 if(selected_option["D"]):
                     selected_option["D"] = False
                 else:
@@ -289,8 +294,12 @@ while running:
                 text_den_surface = font.render(lower_text, True, black)
 
                 line_width = max(text_num_surface.get_width(), text_den_surface.get_width())
-                line_start = (530, 50)
-                line_end = (530 + line_width, 50)
+                line_start = (530, y_trans)
+                line_end = (530 + line_width, y_trans)
+                
+            # Função para limitar o valor entre 0 e 5
+            def limit_value(value):
+                return max(0, min(value, 2))
 
             for icons in icons_options:
                 pressed_icon = handle_icon_press(event.pos, icons["icons"])
@@ -298,47 +307,71 @@ while running:
                     if pressed_icon == "+1":
                         match icons["group"]:
                             case 1:
-                                kp += 1
-                                text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
+                                if selected_option["P"]:
+                                    kp += 1
+                                    kp = limit_value(kp)
+                                    text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
-                                ki += 1
-                                text_ki_surface = font.render("Ki = {:.1f}".format(ki), True, black)
+                                if selected_option["I"]:
+                                    ki += 1
+                                    ki = limit_value(ki)
+                                    text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
                             case 3:
-                                kd += 1
-                                text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
+                                if selected_option["D"]:
+                                    kd += 1
+                                    kd = limit_value(kd)
+                                    text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
                     elif pressed_icon == "-1":
                         match icons["group"]:
                             case 1:
-                                kp += -1
-                                text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
+                                if selected_option["P"]:
+                                    kp += -1
+                                    kp = limit_value(kp)
+                                    text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
-                                ki += -1
-                                text_ki_surface = font.render("Ki = {:.1f}".format(ki), True, black)
+                                if selected_option["I"]:
+                                    ki += -1
+                                    ki = limit_value(ki)
+                                    text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
                             case 3:
-                                kd += -1
-                                text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
+                                if selected_option["D"]:
+                                    kd += -1
+                                    kd = limit_value(kd)
+                                    text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
                     elif pressed_icon == "+0.1":
                         match icons["group"]:
                             case 1:
-                                kp += 0.1
-                                text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
+                                if selected_option["P"]:
+                                    kp += 0.1
+                                    kp = limit_value(kp)
+                                    text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
-                                ki += 0.1
-                                text_ki_surface = font.render("Ki = {:.1f}".format(ki), True, black)
+                                if selected_option["I"]:
+                                    ki += 0.1
+                                    ki = limit_value(ki)
+                                    text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
                             case 3:
-                                kd += 0.1
-                                text_kd_surface = font.render("Kd= {:.1f}".format(kd), True, black)
+                                if selected_option["D"]:
+                                    kd += 0.1
+                                    kd = limit_value(kd)
+                                    text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
                     elif pressed_icon == "-0.1":
                         match icons["group"]:
                             case 1:
-                                kp += -0.1
-                                text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
+                                if selected_option["P"]:
+                                    kp += -0.1
+                                    kp = limit_value(kp)
+                                    text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
-                                ki += -0.1
-                                text_ki_surface = font.render("Ki = {:.1f}".format(ki), True, black)
+                                if selected_option["I"]:
+                                    ki += -0.1
+                                    ki = limit_value(ki)
+                                    text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
                             case 3:
-                                kd += -0.1
-                                text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
+                                if selected_option["D"]:
+                                    kd += -0.1
+                                    kd = limit_value(kd)
+                                    text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
                     break
                     
     # Verificar se a tecla de espaço foi pressionada
@@ -377,9 +410,9 @@ while running:
     pygame.draw.line(screen, black, line_start, line_end, 2)
 
     # Desenhar botões de rádio
-    draw_radio_button(screen, 25, 25, "Proporcional", selected_option["P"])
-    draw_radio_button(screen, 25, 75, "Integral", selected_option["I"])
-    draw_radio_button(screen, 25, 125, "Derivativo", selected_option["D"])
+    draw_radio_button(screen, 25, 75, "Proporcional", selected_option["P"])
+    draw_radio_button(screen, 25, 125, "Integral", selected_option["I"])
+    draw_radio_button(screen, 25, 175, "Derivativo", selected_option["D"])
 
     screen.blit(text_kp_surface, text_kp_pos)
     screen.blit(text_ki_surface, text_ki_pos)
@@ -391,10 +424,12 @@ while running:
             text_rect = text.get_rect(center=icon["rect"].center)
             screen.blit(text, text_rect)
 
-    # Desenhar retângulo branco de fundo
+    # Desenhar retângulo preto de fundo
     pygame.draw.rect(screen, black, (0, 550, width , 50))
+    pygame.draw.rect(screen, red, (0, 0, width , 50))
     # Desenhar o texto no centro da tela
     screen.blit(text_start, text_start_rect)
+    screen.blit(text_start1, text_start_rect1)
 
     # Atualizar a tela
     pygame.display.flip()
