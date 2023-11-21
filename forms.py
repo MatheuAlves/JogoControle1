@@ -15,6 +15,7 @@ import random
 LOWER_LIMIT = 1.0
 UPPER_LIMIT = 15.0
 TOTAL_TIME = 20.0
+STEP_VALUE = 10
 
 # Cores
 white = (255, 255, 255)
@@ -99,7 +100,7 @@ elif choice == '2':
     upper_text = f"{rd_num_c1}s + {rd_num_c2}"
     lower_text = f"s^2 + {rd_den_c1}s + {rd_den_c2}"
 
-trans_cont = 10 * clt.tf(num, den)
+trans_cont = STEP_VALUE * clt.tf(num, den)
 trans_cont_carro = trans_cont
 #time_interval = np.arange(0, TOTAL_TIME + 0.001, 0.001)
 yout, xout = clt.step(trans_cont)
@@ -155,7 +156,7 @@ def draw_radio_button(surface, x, y, text, selected):
 
 button_graph = Button(532, 125, 200, 30, red, "Gerar Resposta", action=lambda: update_data())
 
-text_num_surface = font.render(upper_text, True, black)
+text_num_surface = font.render(f"{STEP_VALUE}({upper_text})", True, black)
 text_den_surface = font.render(lower_text, True, black)
 
 y_trans = 90
@@ -290,7 +291,7 @@ while running:
 
                 graph = pygame.image.fromstring(bytes(raw_data_rgba), size, "RGBA")
 
-                text_num_surface = font.render(upper_text, True, black)
+                text_num_surface = font.render(f"{STEP_VALUE}({upper_text})", True, black)
                 text_den_surface = font.render(lower_text, True, black)
 
                 line_width = max(text_num_surface.get_width(), text_den_surface.get_width())
