@@ -107,7 +107,7 @@ yout, xout = clt.step(trans_cont)
 
 fig = pylab.figure(figsize=[4, 4], dpi=100)
 ax = fig.gca()
-ax.plot(xout, yout)  # Use stem instead of plot
+ax.plot(xout, yout)  # Use stem instead of plot 
 ax.set_title('Resposta ao Degrau')  # Set the title for the stem plot
 ax.set_xlabel('Tempo')  # Set the label for the x-axis
 ax.set_ylabel('Velocidade')  # Set the label for the y-axis
@@ -172,7 +172,7 @@ line_end = (530 + line_width, y_trans)
 text_start = font.render('Aperte espaço para iniciar o jogo', True, grey)
 text_start_rect = text_start.get_rect(center=(width / 2, 575))
 
-text_start1 = font.render('Player 1', True, white)
+text_start1 = font.render('Player 1', True, black)
 text_start_rect1 = text_start1.get_rect(center=(width / 2, 25))
 
 # Loop principal do Pygame
@@ -394,7 +394,7 @@ while running:
         }
 
         # Adicionar um pequeno atraso para garantir que a janela seja fechada antes de abrir o subprocesso
-        time.sleep(0.5)
+        time.sleep(0.01)
         subprocess.run(["python", "game.py", str(subprocess_data)])  # Executar o script 'jogo.py'
         # Finalizar o Pygame
         pygame.quit()

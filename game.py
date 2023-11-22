@@ -35,8 +35,9 @@ gray = (100, 100, 100)
 green = (76, 208, 56)
 red = (255, 0, 0)
 white = (255, 255, 255)
-yellow = (255, 232, 0)
+yellow = (238, 219, 0)
 black = (0, 0, 0)
+purple = (128, 0, 128)
 
 # road and marker sizes
 road_width = 200
@@ -91,6 +92,10 @@ player_group.add(player1)
 # create player 2's car
 player2 = PlayerVehicle('images/yellowCar.png', player2_x, player_y)
 player_group.add(player2)
+
+# Carregamento da imagem 'chegada'
+chegada_image = pygame.image.load('images/finish.png')
+chegada_image = pygame.transform.scale(chegada_image, (width, 100))
 
 # game loop
 running = True
@@ -151,8 +156,8 @@ while running:
     pygame.draw.rect(screen, gray, road2)
     
     # draw the edge markers
-    pygame.draw.rect(screen, yellow, left_edge_marker)
-    pygame.draw.rect(screen, yellow, right_edge_marker)
+    pygame.draw.rect(screen, red, left_edge_marker)
+    pygame.draw.rect(screen, red, right_edge_marker)
     
     pygame.draw.rect(screen, yellow, left_edge_marker2)
     pygame.draw.rect(screen, yellow, right_edge_marker2)
@@ -164,6 +169,7 @@ while running:
     for y in range(marker_height * -2, height, marker_height * 2):
         pygame.draw.rect(screen, white, (lane1, y + lane_marker_move_y1, marker_width, marker_height))
         
+    
     # draw the lane markers on road 2
     lane_marker_move_y2 += speed2 * 1
     if lane_marker_move_y2 >= marker_height * 2:
@@ -181,36 +187,47 @@ while running:
     distancia1 += speed1 * (1/fps)
     distancia2 += speed2 * (1/fps)
     
+    # Desenhe a linha no meio da tela
+    pygame.draw.line(screen, black, line_start, line_end, 2)
+    
     # display the test
+    pygame.draw.rect(screen, red, (115, 550, 180, 50))
+    pygame.draw.rect(screen, black, (115, 550, 180, 50),2)
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
-    text = font.render('Distância 1: {:.2f}'.format(distancia1), True, white)
+    text = font.render('Distância 1: {:.2f}'.format(distancia1), True, black)
     text_rect = text.get_rect()
     text_rect.center = (200, 590)
     screen.blit(text, text_rect)
     
-    text2 = font.render('Distância 2: {:.2f}'.format(distancia2), True, white)
+    
+    pygame.draw.rect(screen, yellow, (505, 550, 180, 50))
+    pygame.draw.rect(screen, black, (505, 550, 180, 50),2)
+    text2 = font.render('Distância 2: {:.2f}'.format(distancia2), True, black)
     text_rect2 = text2.get_rect()
     text_rect2.center = (590, 590)
     screen.blit(text2, text_rect2)
     
     # Título dos Jogadores
+    pygame.draw.rect(screen, yellow, (402, 0, 398, 50))
+    pygame.draw.rect(screen, black, (402, 0, 398, 50),2)
     font = pygame.font.Font(pygame.font.get_default_font(), 32)
-    cpu_text = font.render("CPU", True, yellow)
-    screen.blit(cpu_text, (560, 100))
-    player_text = font.render("PLAYER", True, red)
-    screen.blit(player_text, (150, 100))
+    cpu_text = font.render("CPU", True, black)
+    screen.blit(cpu_text, (560, 10))
+    pygame.draw.rect(screen, red, (0, 0, 400, 50))
+    pygame.draw.rect(screen, black, (0, 0, 400, 50),2)
+    player_text = font.render("PLAYER 1", True, black)
+    screen.blit(player_text, (125, 10))
     
     # Crie uma superfície de texto para exibir o tempo
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
-    text_tempo = font.render('Tempo: {:.2f} s'.format(tempo), True, white)
+    text_tempo = font.render('TEMPO\n  {:.2f} s'.format(tempo), True, white)
     text_rect_tempo = text_tempo.get_rect()
-    text_rect_tempo.center = (width // 2, 590)
+    text_rect_tempo.center = (width // 2, 190)
+    pygame.draw.rect(screen, gray, (width // 2 - 50, 165, 100, 50))
+    pygame.draw.rect(screen, black, (width // 2 - 50, 165, 100, 50),2)
 
     # Desenhe a superfície de texto na tela
     screen.blit(text_tempo, text_rect_tempo)
-
-    # Desenhe a linha no meio da tela
-    pygame.draw.line(screen, black, line_start, line_end, 2)
     
     pygame.display.update()
         
@@ -219,10 +236,11 @@ while running:
             
     # display game over
     if gameover:
-        pygame.draw.rect(screen, gray, (0, 50, width, 100))
-        
-        font = pygame.font.Font(pygame.font.get_default_font(), 16)
-        text = font.render('Game over. Play again? (Enter Y or N)', True, white)
+        # Desenha a imagem 'chegada'
+        screen.blit(chegada_image, (0, 50))
+        font = pygame.font.Font(pygame.font.get_default_font(), 32)
+        pygame.draw.rect(screen, white, (0, 63, width, 70))
+        text = font.render('                     FIM DE JOGO!\nAperte espaço para jogar de novo', True, black)
         text_rect = text.get_rect()
         text_rect.center = (width / 2, 100)
         screen.blit(text, text_rect)
@@ -242,7 +260,7 @@ while running:
                 
             # get the user's input (y or n)
             if event.type == KEYDOWN:
-                if event.key == K_y:
+                if event.key == pygame.K_SPACE:
                     # reset the game
                     gameover = False
                     tempo = 0
@@ -259,7 +277,7 @@ while running:
                     pygame.quit()
 
                     # Adicionar um pequeno atraso para garantir que a janela seja fechada antes de abrir o subprocesso
-                    time.sleep(0.5)
+                    time.sleep(0.01)
                     
                     subprocess.run(["python", "forms.py"])  # Executar o script 'jogo.py'
                 elif event.key == K_n:

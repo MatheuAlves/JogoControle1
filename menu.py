@@ -56,7 +56,7 @@ while running:
             if play_button_rect.collidepoint(event.pos):
                 pygame.mixer.Sound("songs/confirm.mp3").play()
                 pygame.quit()
-                time.sleep(0.5)
+                time.sleep(0.01)
                 subprocess.run(["python", "forms.py"])
                 running = False
                 break
