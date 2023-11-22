@@ -39,6 +39,16 @@ yellow = (238, 219, 0)
 black = (0, 0, 0)
 purple = (128, 0, 128)
 
+win1 = 0  # 0 indica que o jogador 1 perdeu, 1 indica que o jogador 1 ganhou
+win2 = 0  # 0 indica que o jogador 2 perdeu, 1 indica que o jogador 2 ganhou
+
+
+# Música de fundo
+pygame.mixer.Sound("songs/alarm.mp3").play()
+time.sleep(0.3)
+pygame.mixer.music.load("songs/game.mp3")
+pygame.mixer.music.play(-1)
+
 # road and marker sizes
 road_width = 200
 marker_width = 10
@@ -139,6 +149,7 @@ while running:
     if distancia2 > valor_final:
         speed2 = 0
         cont2 = 1
+        win2 = 1
     elif ticks < len(speed_user):
         speed2 = speed_cpu[ticks]
 
@@ -194,11 +205,14 @@ while running:
     pygame.draw.rect(screen, red, (115, 550, 180, 50))
     pygame.draw.rect(screen, black, (115, 550, 180, 50),2)
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
-    text = font.render('Distância 1: {:.2f}'.format(distancia1), True, black)
+    text = font.render('Distância: {:.2f}'.format(distancia1), True, black)
     text_rect = text.get_rect()
     text_rect.center = (200, 590)
     screen.blit(text, text_rect)
-    
+    text3 = font.render('Velocidade: {:.2f}'.format(speed1), True, black)
+    text_rect3 = text3.get_rect()
+    text_rect3.center = (200, 570)
+    screen.blit(text3, text_rect3)
     
     pygame.draw.rect(screen, yellow, (505, 550, 180, 50))
     pygame.draw.rect(screen, black, (505, 550, 180, 50),2)
@@ -206,6 +220,10 @@ while running:
     text_rect2 = text2.get_rect()
     text_rect2.center = (590, 590)
     screen.blit(text2, text_rect2)
+    text4 = font.render('Velocidade: {:.2f}'.format(speed2), True, black)
+    text_rect4 = text4.get_rect()
+    text_rect4.center = (590, 570)
+    screen.blit(text4, text_rect4)
     
     # Título dos Jogadores
     pygame.draw.rect(screen, yellow, (402, 0, 398, 50))
@@ -231,19 +249,33 @@ while running:
     
     pygame.display.update()
         
-    if cont1 == 1 and cont2 == 1:
+    if cont1 == 1 or cont2 == 1:
         gameover = True
             
     # display game over
     if gameover:
-        # Desenha a imagem 'chegada'
-        screen.blit(chegada_image, (0, 50))
-        font = pygame.font.Font(pygame.font.get_default_font(), 32)
-        pygame.draw.rect(screen, white, (0, 63, width, 70))
-        text = font.render('                     FIM DE JOGO!\nAperte espaço para jogar de novo', True, black)
-        text_rect = text.get_rect()
-        text_rect.center = (width / 2, 100)
-        screen.blit(text, text_rect)
+        if cont1 == 1 and cont2 == 0:
+            # Desenha a imagem 'chegada'
+            pygame.mixer.music.pause()
+            pygame.mixer.Sound("songs/win.mp3").play()
+            screen.blit(chegada_image, (0, 50))
+            font = pygame.font.Font(pygame.font.get_default_font(), 32)
+            pygame.draw.rect(screen, white, (0, 63, width, 70))
+            text = font.render('                 Player 1 Venceu!\nAperte espaço para jogar de novo', True, black)
+            text_rect = text.get_rect()
+            text_rect.center = (width / 2, 100)
+            screen.blit(text, text_rect)
+        if cont1 == 1 and cont2 == 1:
+            # Desenha a imagem 'chegada'
+            pygame.mixer.music.pause()
+            pygame.mixer.Sound("songs/fail.mp3").play()
+            screen.blit(chegada_image, (0, 50))
+            font = pygame.font.Font(pygame.font.get_default_font(), 32)
+            pygame.draw.rect(screen, white, (0, 63, width, 70))
+            text = font.render('                   CPU Venceu!\nAperte espaço para jogar de novo', True, black)
+            text_rect = text.get_rect()
+            text_rect.center = (width / 2, 100)
+            screen.blit(text, text_rect)
             
     pygame.display.update()
 

@@ -133,6 +133,10 @@ graph = pygame.image.fromstring(bytes(raw_data_rgba), size, "RGBA")
 # Iniciar o Pygame
 pygame.init()
 
+# Música de fundo
+pygame.mixer.music.load("songs/formSound.mp3")
+pygame.mixer.music.play(-1)
+
 # Configurações da tela do Pygame
 width = 800
 height = 600
@@ -247,20 +251,29 @@ while running:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if 25 <= mouse_x <= 225 and 75 <= mouse_y <= 105:
                 if(selected_option["P"]):
+                    pygame.mixer.Sound("songs/wrong.mp3").play()
                     selected_option["P"] = False
                     if(selected_option["D"]):
+                        pygame.mixer.Sound("songs/wrong.mp3").play()
                         selected_option["D"] = False
                 else:
+                    pygame.mixer.Sound("songs/check.mp3").play()
                     selected_option["P"] = True
+                    
             elif 25 <= mouse_x <= 225 and 125 <= mouse_y <= 155:
                 if(selected_option["I"]):
+                    pygame.mixer.Sound("songs/wrong.mp3").play()
                     selected_option["I"] = False
                 else:
+                    pygame.mixer.Sound("songs/check.mp3").play()
                     selected_option["I"] = True
             elif 25 <= mouse_x <= 225 and 175 <= mouse_y <= 205:
                 if(selected_option["D"]):
+                    pygame.mixer.Sound("songs/wrong.mp3").play()
                     selected_option["D"] = False
+                    
                 else:
+                    pygame.mixer.Sound("songs/check.mp3").play()
                     selected_option["D"] = True
                     selected_option["P"] = True
 
@@ -309,16 +322,19 @@ while running:
                         match icons["group"]:
                             case 1:
                                 if selected_option["P"]:
+                                    pygame.mixer.Sound("songs/check.mp3").play()
                                     kp += 1
                                     kp = limit_value(kp)
                                     text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
                                 if selected_option["I"]:
+                                    pygame.mixer.Sound("songs/check.mp3").play()
                                     ki += 1
                                     ki = limit_value(ki)
                                     text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
                             case 3:
                                 if selected_option["D"]:
+                                    pygame.mixer.Sound("songs/check.mp3").play()
                                     kd += 1
                                     kd = limit_value(kd)
                                     text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
@@ -326,16 +342,19 @@ while running:
                         match icons["group"]:
                             case 1:
                                 if selected_option["P"]:
+                                    pygame.mixer.Sound("songs/wrong.mp3").play()
                                     kp += -1
                                     kp = limit_value(kp)
                                     text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
                                 if selected_option["I"]:
+                                    pygame.mixer.Sound("songs/wrong.mp3").play()
                                     ki += -1
                                     ki = limit_value(ki)
                                     text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
                             case 3:
                                 if selected_option["D"]:
+                                    pygame.mixer.Sound("songs/wrong.mp3").play()
                                     kd += -1
                                     kd = limit_value(kd)
                                     text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
@@ -343,16 +362,19 @@ while running:
                         match icons["group"]:
                             case 1:
                                 if selected_option["P"]:
+                                    pygame.mixer.Sound("songs/check.mp3").play()
                                     kp += 0.1
                                     kp = limit_value(kp)
                                     text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
                                 if selected_option["I"]:
+                                    pygame.mixer.Sound("songs/check.mp3").play()
                                     ki += 0.1
                                     ki = limit_value(ki)
                                     text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
                             case 3:
                                 if selected_option["D"]:
+                                    pygame.mixer.Sound("songs/check.mp3").play()
                                     kd += 0.1
                                     kd = limit_value(kd)
                                     text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
@@ -360,16 +382,19 @@ while running:
                         match icons["group"]:
                             case 1:
                                 if selected_option["P"]:
+                                    pygame.mixer.Sound("songs/wrong.mp3").play()
                                     kp += -0.1
                                     kp = limit_value(kp)
                                     text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
                                 if selected_option["I"]:
+                                    pygame.mixer.Sound("songs/wrong.mp3").play()
                                     ki += -0.1
                                     ki = limit_value(ki)
                                     text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
                             case 3:
                                 if selected_option["D"]:
+                                    pygame.mixer.Sound("songs/wrong.mp3").play()
                                     kd += -0.1
                                     kd = limit_value(kd)
                                     text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
@@ -378,6 +403,8 @@ while running:
     # Verificar se a tecla de espaço foi pressionada
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
+        pygame.mixer.Sound("songs/confirm.mp3").play()
+        time.sleep(0.5)
         running = False
         # Fechar a janela antes de abrir o subprocesso
         pygame.quit()
