@@ -108,7 +108,7 @@ yout, xout = clt.step(trans_cont)
 fig = pylab.figure(figsize=[4, 4], dpi=100)
 ax = fig.gca()
 ax.plot(xout, yout)  # Use stem instead of plot 
-ax.set_title('Resposta ao Degrau')  # Set the title for the stem plot
+ax.set_title('Resposta ao Degrau de Amplitude 10')  # Set the title for the stem plot
 ax.set_xlabel('Tempo')  # Set the label for the x-axis
 ax.set_ylabel('Velocidade')  # Set the label for the y-axis
 # Adjust the spacing around the subplots
@@ -285,7 +285,7 @@ while running:
                 ax.clear()
                 ax.plot(xout, yout)  # Use stem instead of plot
                 #ax.stem(xout, yout, linefmt='b-', markerfmt='bo', basefmt='r-')  # Use stem instead of plot
-                ax.set_title('Resposta ao Degrau')  # Set the title for the stem plot
+                ax.set_title('Resposta ao Degrau de Amplitude 10')  # Set the title for the stem plot
                 ax.set_xlabel('Tempo')  # Set the label for the x-axis
                 ax.set_ylabel('Velocidade')  # Set the label for the y-axis
 
