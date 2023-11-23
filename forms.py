@@ -417,10 +417,11 @@ while running:
 
         subprocess_data = {
             "ft_taxi" : list_data1,
-            "ft_carro" : list_data2
+            "ft_carro" : list_data2,
+            "max_value" : (10 * STEP_VALUE)
         }
 
-        # Adicionar um pequeno atraso para garantir que a janela seja fechada antes de abrir o subprocesso
+        # Adicionar um pequeno atraso para ga rantir que a janela seja fechada antes de abrir o subprocesso
         time.sleep(0.01)
         subprocess.run(["python", "game.py", str(subprocess_data)])  # Executar o script 'jogo.py'
         # Finalizar o Pygame

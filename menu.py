@@ -26,10 +26,15 @@ sound_button_image = pygame.image.load("images/sound.png")
 sound_button_image = pygame.transform.scale(sound_button_image, (30, 30))
 muted_button_image = pygame.image.load("images/mute.png")
 muted_button_image = pygame.transform.scale(muted_button_image, (30, 30))
+plus_button_image = pygame.image.load("images/plus.png")
+plus_button_image = pygame.transform.scale(plus_button_image, (30, 30))
+minus_button_image = pygame.image.load("images/minus.png")
+minus_button_image = pygame.transform.scale(minus_button_image, (30, 30))
 title_image = pygame.image.load("images/CarRace.png")
 
 # Carregando fonte
 font = pygame.font.Font(None, 36)
+font2 = pygame.font.Font(None, 40)
 
 # Música de fundo
 pygame.mixer.music.load("songs/menu.mp3")
@@ -38,15 +43,23 @@ pygame.mixer.music.play(-1)
 # Variável para rastrear se o som está mudo ou não
 is_muted = False
 
+# Variável para controlar o volume
+volume = 0.5
+
 # Definindo as áreas clicáveis dos botões
 play_button_rect = pygame.Rect((width // 2 - 50, 330, 100, 50))
 info_button_rect = pygame.Rect((width // 2 - 50, 400, 100, 50))
+sound_button_rect = pygame.Rect((width // 2 - 50, 470, 100, 50))
 mute_button_rect = pygame.Rect((770, 570, 30, 30))
 info_close_rect = pygame.Rect((698, 52, 50, 50))
+info_close_rect2 = pygame.Rect((500, 150, 50, 50))
+plus_button_rect = pygame.Rect((730, 570, 30, 30))
+minus_button_rect = pygame.Rect((770, 570, 30, 30))
 
 # Loop principal
 running = True
 info_box = False
+info_box2 = False
 
 while running:
     for event in pygame.event.get():
@@ -69,13 +82,21 @@ while running:
                     pygame.mixer.music.pause()
                 else:
                     pygame.mixer.music.unpause()
-            if info_close_rect.collidepoint(event.pos):
+            if sound_button_rect.collidepoint(event.pos):
+                info_box2 = True
+            if plus_button_rect.collidepoint(event.pos):
+                pygame.mixer.music.set_volume(min(1.0, volume + 0.1))
+                volume = pygame.mixer.music.get_volume()
+            if minus_button_rect.collidepoint(event.pos):
+                pygame.mixer.music.set_volume(max(0.0, volume - 0.1))
+                volume = pygame.mixer.music.get_volume()
+            if info_close_rect.collidepoint(event.pos) or info_close_rect2.collidepoint(event.pos):
                 info_box = False
+                info_box2 = False
 
     screen.fill(WHITE)
     screen.blit(background_image, (-200, -100))
 
-    # Desenhar os botões com gradiente
     def draw_gradient_rect(surface, color_top, color_bottom, rect):
         pygame.draw.rect(surface, color_top, rect)
         for y in range(rect.top, rect.bottom):
@@ -89,20 +110,24 @@ while running:
 
     draw_gradient_rect(screen, BLUE, PINK, play_button_rect)
     draw_gradient_rect(screen, BLUE, PINK, info_button_rect)
+    draw_gradient_rect(screen, BLUE, PINK, sound_button_rect)
 
     pygame.draw.rect(screen, BLACK, play_button_rect, 2)
     pygame.draw.rect(screen, BLACK, info_button_rect, 2)
+    pygame.draw.rect(screen, BLACK, sound_button_rect, 2)
 
-    play_button_text = font.render("Jogar", True, BLACK)
-    info_button_text = font.render("Info", True, BLACK)
+    play_button_text = font.render("Jogar", True, WHITE)
+    info_button_text = font.render("Info", True, WHITE)
+    sound_button_text = font.render("Som", True, WHITE)
 
     screen.blit(play_button_text, (width // 2 - play_button_text.get_width() // 2, 340))
     screen.blit(info_button_text, (width // 2 - info_button_text.get_width() // 2, 415))
+    screen.blit(sound_button_text, (width // 2 - sound_button_text.get_width() // 2, 485))
 
-    # Escolha a imagem do botão de mudo com base no estado de is_muted
     mute_button_rect = screen.blit(muted_button_image if is_muted else sound_button_image, (770, 570))
+    
+    
 
-    # Título "CAR RACE" acima do botão "Jogar"
     screen.blit(title_image, (width // 2 - title_image.get_width() // 2, 100))
 
     if info_box:
@@ -130,6 +155,23 @@ while running:
         info_close_image = pygame.image.load("images/botao-fechar.png")
         info_close_image = pygame.transform.scale(info_close_image, (50, 50))
         screen.blit(info_close_image, (698, 52))
+        
+    if info_box2:    
+        pygame.draw.rect(screen, WHITE, (250, 150, 300, 200))
+        pygame.draw.rect(screen, BLACK, (250, 150, 300, 200), 2)
+        sound_text = "SOM"
+        text_surface = font2.render(sound_text, True, BLACK)
+        screen.blit(text_surface, (370, 160))
+        text = font.render('{:.0%}'.format(volume), True, BLACK)
+        text_rect = text.get_rect()
+        text_rect.center = (400, 250)
+        screen.blit(text, text_rect)
+        minus_button_rect = screen.blit(minus_button_image,  (300, 235))
+        plus_button_rect = screen.blit(plus_button_image, (465, 235))
+        
+        info_close_image = pygame.image.load("images/botao-fechar.png")
+        info_close_image = pygame.transform.scale(info_close_image, (50, 50))
+        screen.blit(info_close_image, (500, 150))
 
     pygame.display.flip()
 
