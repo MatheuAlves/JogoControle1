@@ -253,14 +253,18 @@ while running:
     
     # Crie uma superfície de texto para exibir o tempo
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
-    text_tempo = font.render('TEMPO\n  {:.2f} s'.format(tempo), True, white)
+    text_tempo = font.render('TEMPO:',True,white)
+    text_tempo2 = font.render('{:.2f} s'.format(tempo), True, white)
     text_rect_tempo = text_tempo.get_rect()
-    text_rect_tempo.center = (width // 2, 190)
+    text_rect_tempo = (width //  2 - text_tempo.get_width() /2, 175)
+    text_rect_tempo2 = text_tempo2.get_rect()
+    text_rect_tempo2 = (width // 2 -  text_tempo2.get_width() /2, 195)
     pygame.draw.rect(screen, gray, (width // 2 - 50, 165, 100, 50))
     pygame.draw.rect(screen, black, (width // 2 - 50, 165, 100, 50),2)
 
     # Desenhe a superfície de texto na tela
     screen.blit(text_tempo, text_rect_tempo)
+    screen.blit(text_tempo2, text_rect_tempo2)
     
     pygame.display.update()
         
@@ -360,10 +364,18 @@ while running:
             screen.blit(chegada_image, (0, 50))
             font = pygame.font.Font(None, 32)
             pygame.draw.rect(screen, white, (0, 63, width, 70))
-            text = font.render('                 Player 1 Venceu!\nAperte espaço para jogar de novo', True, black)
+            text = font.render('Player 1 Venceu!', True, black)
+            text2 = font.render('Aperte espaço para jogar de novo', True, black)
+
+            set_back = text.get_width() / 2
+            set_back2 = text2.get_width() / 2
+
             text_rect = text.get_rect()
-            text_rect.center = (width / 2, 100)
+            text_rect = (width / 2 - set_back, 100 - 25)
             screen.blit(text, text_rect)
+            text_rect2 = text.get_rect()
+            text_rect2 = (width / 2 - set_back2, 100 - 5)
+            screen.blit(text2, text_rect2)
             
         if cont1 == 1 and cont2 == 1 or (explodiu1 and explodiu2):
             # Desenha a imagem 'chegada'
@@ -372,10 +384,19 @@ while running:
             screen.blit(chegada_image, (0, 50))
             font = pygame.font.Font(None, 32)
             pygame.draw.rect(screen, white, (0, 63, width, 70))
-            text = font.render('                   Empatou!\nAperte espaço para jogar de novo', True, black)
+            text = font.render('Empatou!', True, black)
+            text2 = font.render('Aperte espaço para jogar de novo', True, black)
+            
+            set_back = text.get_width() / 2
+            set_back2 = text2.get_width() / 2
+
             text_rect = text.get_rect()
-            text_rect.center = (width / 2, 100)
+            text_rect = (width / 2 - set_back, 100 - 25)
             screen.blit(text, text_rect)
+            text_rect2 = text.get_rect()
+            text_rect2 = (width / 2 - set_back2, 100 - 5)
+            screen.blit(text2, text_rect2)
+            
             
         if cont1 == 0 and cont2 == 1:
             # Desenha a imagem 'chegada'
@@ -384,10 +405,18 @@ while running:
             screen.blit(chegada_image, (0, 50))
             font = pygame.font.Font(None, 32)
             pygame.draw.rect(screen, white, (0, 63, width, 70))
-            text = font.render('                   CPU Venceu!\nAperte espaço para jogar de novo', True, black)
+            text = font.render('CPU Venceu!', True, black)
+            text2 = font.render('Aperte espaço para jogar de novo', True, black)
+
+            set_back = text.get_width() / 2
+            set_back2 = text2.get_width() / 2
+
             text_rect = text.get_rect()
-            text_rect.center = (width / 2, 100)
+            text_rect = (width / 2 - set_back, 100 - 25)
             screen.blit(text, text_rect)
+            text_rect2 = text.get_rect()
+            text_rect2 = (width / 2 - set_back2, 100 - 5)
+            screen.blit(text2, text_rect2)
             
     pygame.display.update()
 
