@@ -16,12 +16,15 @@ LOWER_LIMIT = 1.0
 UPPER_LIMIT = 15.0
 TOTAL_TIME = 20.0
 STEP_VALUE = 10
+LIMIT = 6
 
 # Cores
 white = (255, 255, 255)
 black = (0, 0, 0)
 grey = (220,220,220)
 red = (255, 0, 0)
+
+time_interval = np.arange(0, TOTAL_TIME + 0.001, 0.001)
 
 # Create a button class
 class Button:
@@ -51,31 +54,39 @@ def update_data():
     global trans_cont
     global trans_cont_carro
 
-    if selected_option["P"]:
-        if selected_option["I"]:
-            if selected_option["D"]:
-                gain = clt.tf([kp], [1]) + clt.tf([ki], [1, 0]) + clt.tf([kd, 0], [1])
-                new_tf_cont = gain * trans_cont
-                yout, xout = clt.step(new_tf_cont)
-                trans_cont_carro = new_tf_cont
-            else:
-                gain = clt.tf([kp], [1]) + clt.tf([ki], [1, 0])
-                new_tf_cont = gain * trans_cont
-                yout, xout = clt.step(new_tf_cont)
-                trans_cont_carro = new_tf_cont
-        else:
+    option = "P" if selected_option["P"] else ""
+    option += "I" if selected_option["I"] else ""
+    option += "D" if selected_option["D"] else ""
+
+    match option:
+        case "P":
             gain = clt.tf([kp], [1])
             new_tf_cont = gain * trans_cont
-            yout, xout = clt.step(new_tf_cont)
+            yout, xout = clt.step(new_tf_cont, time_interval)
             trans_cont_carro = new_tf_cont
-    elif selected_option["I"]:
-        gain = clt.tf([kp], [1]) + clt.tf([ki], [1, 0]) + clt.tf([kd, 0], [1])
-        new_tf_cont = gain * trans_cont
-        yout, xout = clt.step(new_tf_cont)
-        trans_cont_carro = new_tf_cont
-    else:
-        yout, xout = clt.step(trans_cont)
-        trans_cont_carro = trans_cont
+        case "I":
+            gain = clt.tf([ki], [1, 0])
+            new_tf_cont = gain * trans_cont
+            yout, xout = clt.step(new_tf_cont, time_interval)
+            trans_cont_carro = new_tf_cont
+        case "PI":
+            gain = (clt.tf([kp], [1]) + clt.tf([ki], [1, 0]))
+            new_tf_cont = gain * trans_cont
+            yout, xout = clt.step(new_tf_cont, time_interval)
+            trans_cont_carro = new_tf_cont
+        case "PD":
+            gain = (clt.tf([kp], [1]) + clt.tf([kd, 0], [1]))
+            new_tf_cont = gain * trans_cont
+            yout, xout = clt.step(new_tf_cont, time_interval)
+            trans_cont_carro = new_tf_cont
+        case "PID":
+            gain = (clt.tf([kp], [1]) + clt.tf([ki], [1, 0]) + clt.tf([kd, 0], [1]))
+            new_tf_cont = gain * trans_cont
+            yout, xout = clt.step(new_tf_cont, time_interval)
+            trans_cont_carro = new_tf_cont
+        case "":
+            yout, xout = clt.step(trans_cont, time_interval)
+            trans_cont_carro = trans_cont
         
 
 choice = random.choice(['1', '2'])
@@ -102,15 +113,16 @@ elif choice == '2':
 
 trans_cont = STEP_VALUE * clt.tf(num, den)
 trans_cont_carro = trans_cont
-#time_interval = np.arange(0, TOTAL_TIME + 0.001, 0.001)
-yout, xout = clt.step(trans_cont)
+yout, xout = clt.step(trans_cont, time_interval)
+max_line, max_out = clt.step(LIMIT * STEP_VALUE, time_interval)
 
 fig = pylab.figure(figsize=[4, 4], dpi=100)
 ax = fig.gca()
-ax.plot(xout, yout)  # Use stem instead of plot 
+ax.plot(xout, yout, max_out, max_line)  # Use stem instead of plot 
 ax.set_title('Resposta ao Degrau de Amplitude 10')  # Set the title for the stem plot
 ax.set_xlabel('Tempo')  # Set the label for the x-axis
 ax.set_ylabel('Velocidade')  # Set the label for the y-axis
+ax.legend(['Reposta Degrau', 'Velocidade Limite'])
 # Adjust the spacing around the subplots
 fig.subplots_adjust(left=0.20, right=0.97, bottom=0.11, top=0.9)
 
@@ -283,11 +295,12 @@ while running:
 
                 # Redraw the graph
                 ax.clear()
-                ax.plot(xout, yout)  # Use stem instead of plot
+                ax.plot(xout, yout, max_out, max_line)  # Use stem instead of plot
                 #ax.stem(xout, yout, linefmt='b-', markerfmt='bo', basefmt='r-')  # Use stem instead of plot
                 ax.set_title('Resposta ao Degrau de Amplitude 10')  # Set the title for the stem plot
                 ax.set_xlabel('Tempo')  # Set the label for the x-axis
                 ax.set_ylabel('Velocidade')  # Set the label for the y-axis
+                ax.legend(['Reposta Degrau', 'Velocidade Limite'])
 
                 # Adjust the spacing around the subplots
                 fig.subplots_adjust(left=0.20, right=0.97, bottom=0.11, top=0.9)
@@ -418,7 +431,7 @@ while running:
         subprocess_data = {
             "ft_taxi" : list_data1,
             "ft_carro" : list_data2,
-            "max_value" : (10 * STEP_VALUE)
+            "max_value" : (LIMIT * STEP_VALUE)
         }
 
         # Adicionar um pequeno atraso para ga rantir que a janela seja fechada antes de abrir o subprocesso
