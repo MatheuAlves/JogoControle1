@@ -22,15 +22,15 @@ PINK = (252, 108, 133)
 # Carregando imagens
 background_image = pygame.image.load("images/background1.jpg")
 background_image = pygame.transform.scale(background_image, (1200, 900))
-sound_button_image = pygame.image.load("images/sound.png")
+sound_button_image = pygame.image.load("images/soundW.png")
 sound_button_image = pygame.transform.scale(sound_button_image, (30, 30))
-muted_button_image = pygame.image.load("images/mute.png")
+muted_button_image = pygame.image.load("images/muteW.png")
 muted_button_image = pygame.transform.scale(muted_button_image, (30, 30))
 plus_button_image = pygame.image.load("images/plus.png")
 plus_button_image = pygame.transform.scale(plus_button_image, (30, 30))
 minus_button_image = pygame.image.load("images/minus.png")
 minus_button_image = pygame.transform.scale(minus_button_image, (30, 30))
-title_image = pygame.image.load("images/CarRace.png")
+title_image = pygame.image.load("images/CarControl.png")
 
 # Carregando fonte
 font = pygame.font.Font(None, 36)
