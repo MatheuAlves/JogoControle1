@@ -17,6 +17,7 @@ UPPER_LIMIT = 15.0
 TOTAL_TIME = 20.0
 STEP_VALUE = 10
 LIMIT = 6
+MAX_VALUE = STEP_VALUE * LIMIT
 
 # Cores
 white = (255, 255, 255)
@@ -51,8 +52,8 @@ def update_data():
     # Function to update data
     global yout
     global xout
-    global trans_cont
-    global trans_cont_carro
+    global tf_original
+    global tf_player
 
     option = "P" if selected_option["P"] else ""
     option += "I" if selected_option["I"] else ""
@@ -61,32 +62,32 @@ def update_data():
     match option:
         case "P":
             gain = clt.tf([kp], [1])
-            new_tf_cont = gain * trans_cont
+            new_tf_cont = gain * tf_original
             yout, xout = clt.step(new_tf_cont, time_interval)
-            trans_cont_carro = new_tf_cont
+            tf_player = new_tf_cont
         case "I":
             gain = clt.tf([ki], [1, 0])
-            new_tf_cont = gain * trans_cont
+            new_tf_cont = gain * tf_original
             yout, xout = clt.step(new_tf_cont, time_interval)
-            trans_cont_carro = new_tf_cont
+            tf_player = new_tf_cont
         case "PI":
             gain = (clt.tf([kp], [1]) + clt.tf([ki], [1, 0]))
-            new_tf_cont = gain * trans_cont
+            new_tf_cont = gain * tf_original
             yout, xout = clt.step(new_tf_cont, time_interval)
-            trans_cont_carro = new_tf_cont
+            tf_player = new_tf_cont
         case "PD":
             gain = (clt.tf([kp], [1]) + clt.tf([kd, 0], [1]))
-            new_tf_cont = gain * trans_cont
+            new_tf_cont = gain * tf_original
             yout, xout = clt.step(new_tf_cont, time_interval)
-            trans_cont_carro = new_tf_cont
+            tf_player = new_tf_cont
         case "PID":
             gain = (clt.tf([kp], [1]) + clt.tf([ki], [1, 0]) + clt.tf([kd, 0], [1]))
-            new_tf_cont = gain * trans_cont
+            new_tf_cont = gain * tf_original
             yout, xout = clt.step(new_tf_cont, time_interval)
-            trans_cont_carro = new_tf_cont
+            tf_player = new_tf_cont
         case "":
-            yout, xout = clt.step(trans_cont, time_interval)
-            trans_cont_carro = trans_cont
+            yout, xout = clt.step(tf_original, time_interval)
+            tf_player = tf_original
         
 
 choice = random.choice(['1', '2'])
@@ -102,19 +103,18 @@ if choice == '1':
 
 elif choice == '2':
     rd_num_c1 = round(random.uniform(LOWER_LIMIT, UPPER_LIMIT), 1)
-    rd_num_c2 = round(random.uniform(LOWER_LIMIT, UPPER_LIMIT), 1)
-    num = np.array([rd_num_c1, rd_num_c2])
+    num = np.array([1, rd_num_c1])
     rd_den_c1 = round(random.uniform(LOWER_LIMIT, UPPER_LIMIT), 1)
     rd_den_c2 = round(random.uniform(LOWER_LIMIT, UPPER_LIMIT), 1)
     den = np.array([1, rd_den_c1, rd_den_c2])
 
-    upper_text = f"{rd_num_c1}s + {rd_num_c2}"
+    upper_text = f"s + {rd_num_c1}"
     lower_text = f"s^2 + {rd_den_c1}s + {rd_den_c2}"
 
-trans_cont = STEP_VALUE * clt.tf(num, den)
-trans_cont_carro = trans_cont
-yout, xout = clt.step(trans_cont, time_interval)
-max_line, max_out = clt.step(LIMIT * STEP_VALUE, time_interval)
+tf_original = STEP_VALUE * clt.tf(num, den)
+tf_player = tf_original
+yout, xout = clt.step(tf_original, time_interval)
+max_line, max_out = clt.step(MAX_VALUE, time_interval)
 
 fig = pylab.figure(figsize=[4, 4], dpi=100)
 ax = fig.gca()
@@ -224,10 +224,10 @@ icons_options = [
     {   
         "group" : 2,
         "icons" : [
-            {"rect": pygame.Rect(icon_spacing_x, icon_spacing_y + 50, icon_size, icon_size), "text": "+1"},
-            {"rect": pygame.Rect(icon_spacing_x + icon_size + icon_spacing, icon_spacing_y + 50, icon_size, icon_size), "text": "-1"},
-            {"rect": pygame.Rect(icon_spacing_x + 2 * (icon_size + icon_spacing), icon_spacing_y + 50, icon_size, icon_size), "text": "+0.1"},
-            {"rect": pygame.Rect(icon_spacing_x + 3 * (icon_size + icon_spacing) + icon_spacing/2, icon_spacing_y + 50, icon_size, icon_size), "text": "-0.1"}
+            {"rect": pygame.Rect(icon_spacing_x, icon_spacing_y + 50, icon_size, icon_size), "text": "+0.1"},
+            {"rect": pygame.Rect(icon_spacing_x + icon_size + icon_spacing, icon_spacing_y + 50, icon_size, icon_size), "text": "-0.1"},
+            {"rect": pygame.Rect(icon_spacing_x + 2 * (icon_size + icon_spacing), icon_spacing_y + 50, icon_size, icon_size), "text": "+0.01"},
+            {"rect": pygame.Rect(icon_spacing_x + 3 * (icon_size + icon_spacing) + icon_spacing/2, icon_spacing_y + 50, icon_size, icon_size), "text": "-0.01"}
         ]
     },
     {   
@@ -248,7 +248,7 @@ def handle_icon_press(mouse_pos, icons_list):
     return None
 
 text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
-text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
+text_ki_surface = font.render("Ki  = {:.2f}".format(ki), True, black)
 text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
 
 text_kp_pos = (25, 275)
@@ -324,9 +324,12 @@ while running:
                 line_start = (530, y_trans)
                 line_end = (530 + line_width, y_trans)
                 
-            # Função para limitar o valor entre 0 e 5
-            def limit_value(value):
-                return max(0, min(value, 2))
+            # Função para limitar o valor entre 0 e 5 para P ou D
+            def limit_value_PD(value):
+                return max(0, min(value, 5))
+            # Função para limitar o valor entre 0 e 1 para I
+            def limit_value_I(value):
+                return max(0, min(value, 1))
 
             for icons in icons_options:
                 pressed_icon = handle_icon_press(event.pos, icons["icons"])
@@ -337,19 +340,13 @@ while running:
                                 if selected_option["P"]:
                                     pygame.mixer.Sound("songs/check.mp3").play()
                                     kp += 1
-                                    kp = limit_value(kp)
+                                    kp = limit_value_PD(kp)
                                     text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
-                            case 2:
-                                if selected_option["I"]:
-                                    pygame.mixer.Sound("songs/check.mp3").play()
-                                    ki += 1
-                                    ki = limit_value(ki)
-                                    text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
                             case 3:
                                 if selected_option["D"]:
                                     pygame.mixer.Sound("songs/check.mp3").play()
                                     kd += 1
-                                    kd = limit_value(kd)
+                                    kd = limit_value_PD(kd)
                                     text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
                     elif pressed_icon == "-1":
                         match icons["group"]:
@@ -357,19 +354,13 @@ while running:
                                 if selected_option["P"]:
                                     pygame.mixer.Sound("songs/wrong.mp3").play()
                                     kp += -1
-                                    kp = limit_value(kp)
+                                    kp = limit_value_PD(kp)
                                     text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
-                            case 2:
-                                if selected_option["I"]:
-                                    pygame.mixer.Sound("songs/wrong.mp3").play()
-                                    ki += -1
-                                    ki = limit_value(ki)
-                                    text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
                             case 3:
                                 if selected_option["D"]:
                                     pygame.mixer.Sound("songs/wrong.mp3").play()
                                     kd += -1
-                                    kd = limit_value(kd)
+                                    kd = limit_value_PD(kd)
                                     text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
                     elif pressed_icon == "+0.1":
                         match icons["group"]:
@@ -377,19 +368,19 @@ while running:
                                 if selected_option["P"]:
                                     pygame.mixer.Sound("songs/check.mp3").play()
                                     kp += 0.1
-                                    kp = limit_value(kp)
+                                    kp = limit_value_PD(kp)
                                     text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
                                 if selected_option["I"]:
                                     pygame.mixer.Sound("songs/check.mp3").play()
                                     ki += 0.1
-                                    ki = limit_value(ki)
-                                    text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
+                                    ki = limit_value_I(ki)
+                                    text_ki_surface = font.render("Ki  = {:.2f}".format(ki), True, black)
                             case 3:
                                 if selected_option["D"]:
                                     pygame.mixer.Sound("songs/check.mp3").play()
                                     kd += 0.1
-                                    kd = limit_value(kd)
+                                    kd = limit_value_PD(kd)
                                     text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
                     elif pressed_icon == "-0.1":
                         match icons["group"]:
@@ -397,20 +388,36 @@ while running:
                                 if selected_option["P"]:
                                     pygame.mixer.Sound("songs/wrong.mp3").play()
                                     kp += -0.1
-                                    kp = limit_value(kp)
+                                    kp = limit_value_PD(kp)
                                     text_kp_surface = font.render("Kp = {:.1f}".format(kp), True, black)
                             case 2:
                                 if selected_option["I"]:
                                     pygame.mixer.Sound("songs/wrong.mp3").play()
                                     ki += -0.1
-                                    ki = limit_value(ki)
-                                    text_ki_surface = font.render("Ki  = {:.1f}".format(ki), True, black)
+                                    ki = limit_value_I(ki)
+                                    text_ki_surface = font.render("Ki  = {:.2f}".format(ki), True, black)
                             case 3:
                                 if selected_option["D"]:
                                     pygame.mixer.Sound("songs/wrong.mp3").play()
                                     kd += -0.1
-                                    kd = limit_value(kd)
+                                    kd = limit_value_PD(kd)
                                     text_kd_surface = font.render("Kd = {:.1f}".format(kd), True, black)
+                    elif pressed_icon == "+0.01":
+                        match icons["group"]:
+                            case 2:
+                                if selected_option["I"]:
+                                    pygame.mixer.Sound("songs/wrong.mp3").play()
+                                    ki += 0.01
+                                    ki = limit_value_I(ki)
+                                    text_ki_surface = font.render("Ki  = {:.2f}".format(ki), True, black)
+                    elif pressed_icon == "-0.01":
+                        match icons["group"]:
+                            case 2:
+                                if selected_option["I"]:
+                                    pygame.mixer.Sound("songs/wrong.mp3").play()
+                                    ki += -0.01
+                                    ki = limit_value_I(ki)
+                                    text_ki_surface = font.render("Ki  = {:.2f}".format(ki), True, black)
                     break
                     
     # Verificar se a tecla de espaço foi pressionada
@@ -422,16 +429,16 @@ while running:
         # Fechar a janela antes de abrir o subprocesso
         pygame.quit()
 
-        data1 = clt.tfdata(trans_cont)
-        data2 = clt.tfdata(trans_cont_carro)
+        data1 = clt.tfdata(tf_original)
+        data2 = clt.tfdata(tf_player)
         # Transformation to lists
         list_data1 = [[float(item) for sublist in nested_list for array_item in sublist for item in array_item] for nested_list in data1]
         list_data2 = [[float(item) for sublist in nested_list for array_item in sublist for item in array_item] for nested_list in data2]
 
         subprocess_data = {
-            "ft_taxi" : list_data1,
-            "ft_carro" : list_data2,
-            "max_value" : (LIMIT * STEP_VALUE)
+            "ft_original" : list_data1,
+            "ft_player" : list_data2,
+            "max_value" : (MAX_VALUE)
         }
 
         # Adicionar um pequeno atraso para ga rantir que a janela seja fechada antes de abrir o subprocesso

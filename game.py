@@ -123,12 +123,12 @@ ticks = 0
 
 time_interval = np.arange(0, TOTAL_TIME + 1/fps, 1/fps)
 
-trans_cont_user = clt.tf(subprocess_data["ft_carro"][0], subprocess_data["ft_carro"][1])
+trans_cont_user = clt.tf(subprocess_data["ft_player"][0], subprocess_data["ft_player"][1])
 trans_disc_user = clt.sample_system(trans_cont_user, 1/fps, method='zoh')
 yout_user, xout_user = clt.step(trans_disc_user, time_interval)
 speed_user = yout_user.tolist()
 
-trans_cont_cpu = clt.tf(subprocess_data["ft_taxi"][0], subprocess_data["ft_taxi"][1])
+trans_cont_cpu = clt.tf(subprocess_data["ft_original"][0], subprocess_data["ft_original"][1])
 trans_disc_cpu = clt.sample_system(trans_cont_cpu, 1/fps, method='zoh')
 yout_cpu, xout_cpu = clt.step(trans_disc_cpu, time_interval)
 speed_cpu = yout_cpu.tolist()
