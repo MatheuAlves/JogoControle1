@@ -43,6 +43,6 @@
 
 <h3>🙋‍♂️ Participantes: </h3>
 
-<li>Gabriel Teixeira J ́ulio</li>
+<li>Gabriel Teixeira Júlio</li>
 <li>Luan Gonçalves Santos</li>
 <li>Marcus Vinicius Nogueira Santos</li>
