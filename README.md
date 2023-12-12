@@ -2,7 +2,7 @@
 
 <h3>📢 Manual de instalação</h3>
 <ul>
-<li>Baixar e Instalar o Python</li>
+<li>Baixar e instalar o Python</li>
     <br>
 <li>Instalar a biblioteca pygame</li>
     <ul>
