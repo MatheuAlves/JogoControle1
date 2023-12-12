@@ -1,4 +1,4 @@
-# Car Control: Explorando o Controle de Sistemas Dinâmicos Atraves de um Jogo Educativo (Player vs CPU)
+# Car Control: Explorando o Controle de Sistemas Dinâmicos Através de um Jogo Educativo (Player vs CPU)
 
 <h3>📢 Manual de instalação</h3>
 <ul>
